@@ -1,0 +1,75 @@
+package CarParkExitClients;
+import java.io.*;
+import java.net.*;
+import AdvancedCarParkServer.CPMSThread;
+
+/*
+ * Exit client two class
+ */
+
+public class ExitClientTwo {
+	
+	// Client constructor
+	public ExitClientTwo(ServerSocket serverSocket, String threadName) throws IOException{
+		
+		// Start a new thread
+		new CPMSThread(serverSocket.accept(), threadName).start();
+	}
+	
+	// Run the client
+	public static void main(String [] args) throws IOException{
+		
+		// Create the client socket
+		Socket clientSocket = null;
+		String clientName = "Exit 2";
+		int clientPort = 4545;
+		String serverName = "localhost";
+		
+		// I/O
+		PrintWriter outBound = null;
+		BufferedReader inBound = null;
+		
+		// Start up the client on the clientPort
+		try{
+			clientSocket = new Socket(serverName, clientPort);
+			outBound = new PrintWriter(clientSocket.getOutputStream(), true);
+			inBound = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		}
+		catch(UnknownHostException e){
+			System.err.println("Don't know about host: localhost ");
+			System.exit(1);
+		}
+		catch(IOException e){
+			System.err.println("Couldn't get I/O for the connection to "+ clientPort);
+			System.exit(1);
+		}
+		
+		// Take console input
+		BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+		String fromServer, fromUser;
+		
+		System.out.println("Initialised " + clientName + " client and I/O connections.");
+		/*
+		 * On key press the client communicates with the server,
+		 * a key press indicates the arrival of a car that requests
+		 * to park on one of the floors, the request is sent to
+		 * the server and the client waits for a response.
+		 * 
+		 */
+		
+		// While the client is live listen for event
+		while(true){
+			fromUser = userInput.readLine();
+			if(fromUser != null){
+				
+				// Send client input to server
+				outBound.println(fromUser);
+			}
+			
+			// Read and print server response to client window
+			fromServer = inBound.readLine();
+			System.out.println(serverName+":" + fromServer);
+		}
+	}
+
+}
