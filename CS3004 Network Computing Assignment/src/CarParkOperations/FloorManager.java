@@ -16,11 +16,11 @@ public class FloorManager {
 		int code = 9;
 		
 		if(groundFloor.space > 0){
-			code = 0;
+			code = 0; 
 		}else 
 			{
 				if(firstFloor.space > 0){
-					code = 1;
+					code = 1; 
 				}
 			}
 		return code;
@@ -31,19 +31,22 @@ public class FloorManager {
 		String action = "No spaces available";
 		
 		if(checkSpace() == 0){
-			dequeue();
+			if(queue > 0){
+				--queue;	
+			}
 			--groundFloor.space;
 			action = "Parking on ground floor";
 		}
 		else if(checkSpace() == 1){
-			dequeue();
+			if(queue > 0){
+				--queue;	
+			}
 			--firstFloor.space;
 			action = "Parking on first floor";
+		}else {
+			++queue;
 		}
-		else if(checkSpace() == 9){
-			queue();
-		}
-		
+	
 		return action;
 	}
 	
@@ -85,17 +88,6 @@ public class FloorManager {
 
 	}
 	
-	// Queue management
-	private void queue(){
-		++queue;
-	}
-	
-	private void dequeue(){
-		if(queue > 0){
-			--queue;
-		}
-	}
-
 	// Nested class creates a floor object
 	private class Floor {
 		
