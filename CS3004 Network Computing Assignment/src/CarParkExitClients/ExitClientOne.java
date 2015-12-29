@@ -8,13 +8,7 @@ import AdvancedCarParkServer.CPMSThread;
  */
 
 public class ExitClientOne {
-	
-	// Client constructor
-	public ExitClientOne(ServerSocket serverSocket, String threadName) throws IOException{
-		
-		// Start a new thread
-		new CPMSThread(serverSocket.accept(), threadName).start();
-	}
+
 	
 	// Run the client
 	public static void main(String [] args) throws IOException{

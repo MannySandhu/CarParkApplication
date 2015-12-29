@@ -3,11 +3,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-import AdvancedCarParkServer.CPMSThread;
 
 /*
  * Entrance client two class
@@ -15,12 +12,6 @@ import AdvancedCarParkServer.CPMSThread;
 
 public class EntranceClientTwo {
 	
-	// Client constructor
-	public EntranceClientTwo(ServerSocket serverSocket, String clientID) throws IOException{
-		
-		// Start a new thread
-		new CPMSThread(serverSocket.accept(), clientID).start();
-	}
 	
 	// Run the client
 	public static void main(String [] args) throws IOException{

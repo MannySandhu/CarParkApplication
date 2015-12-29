@@ -12,21 +12,21 @@ public class CPMSThread extends Thread {
 	
 	private Socket clientSocket = null;
 	private String clientID;
-	private CPMSProtocol protocol;
-	CPMSProtocol varObj = new CPMSProtocol(10);
+	private CPMSProtocol floorSpaceData;
 	
 	// Constructor for launching new client-server processes
-	public CPMSThread(Socket clientSocket, String clientID){
+	public CPMSThread(Socket clientSocket, String clientID, CPMSProtocol floorSpaceData){
 		super(clientID);
 		this.clientSocket = clientSocket;
-		protocol = varObj;
+		this.floorSpaceData = floorSpaceData;
+		
 	}
 	
 	// Define what the thread does when running
 	public void run(){
 		try {
 			
-			// Get the the
+			// Get the current threads clientID
 			clientID = Thread.currentThread().getName();
 			System.out.println(clientID + " client thread initialising");
 			
@@ -35,16 +35,17 @@ public class CPMSThread extends Thread {
 			BufferedReader inBound = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			String inputLine, outputLine;
 			
-			// Protocol object
-			//CPMSProtocol protocol = new CPMSProtocol();
 			
 			while((inputLine = inBound.readLine()) != null){
-try{
-				protocol.acquireLock();
+				try{
+					
+				// Get a lock	
+				floorSpaceData.acquireLock();
 				// Process client input and send response to client
-				outputLine = protocol.processInput(inputLine);
+				outputLine = floorSpaceData.processInput(inputLine);
+				// Do action
 				outBound.println(outputLine);
-				protocol.releaseLock();
+				floorSpaceData.releaseLock();
 				
 				// Print out to server window
 				System.out.println(outputLine);
@@ -52,9 +53,10 @@ try{
 				if(inputLine.equalsIgnoreCase("end")){
 					break;
 				}
-}catch(InterruptedException e){
-	System.out.println("failed to get lock");
-}
+				
+				}catch(InterruptedException e){
+					System.out.println("failed to get lock");
+				}
 			}
 			outBound.close();
 			inBound.close();

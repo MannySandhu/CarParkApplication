@@ -1,9 +1,7 @@
 package AdvancedCarParkServer;
-import CarParkOperations.*;
-import CarParkExitClients.*;
-import CarParkEntranceClients.*;
-import java.io.*;
-import java.net.*;
+import CarParkOperations.FloorManager; 
+import java.io.IOException;
+import java.net.ServerSocket;
 
 /*
  * Server class for the Car Park Management System (CPMS)
@@ -12,6 +10,16 @@ import java.net.*;
 public class CPMSServer {
 	
 	public static void main(String [] args) throws IOException {
+		
+		
+		/*
+		 * Server holds the floor space data
+		 */
+		FloorManager floorSpace = new FloorManager();
+		
+		// Create global protocol object
+		CPMSProtocol floorSpaceData = new CPMSProtocol(floorSpace);
+		
 		
 		// Create the server socket
 		ServerSocket CPMSServerSocket = null;
@@ -32,21 +40,20 @@ public class CPMSServer {
 		System.out.println(serverName+" is running:");
 		
 		// Print the spaces available to the server window
-		
-		
+		floorSpaceData.CarParkSpaceState();
 		
 		while(listening){
 			// Run the two entrance client threads
-			new EntranceClientOne(CPMSServerSocket,"ENC_1");
-			new EntranceClientTwo(CPMSServerSocket,"ENC_2");
+			new CPMSThread(CPMSServerSocket.accept(), "Entrance_1", floorSpaceData).start();
+			new CPMSThread(CPMSServerSocket.accept(), "Entrance_2", floorSpaceData).start();
 			
 			// Run the two ground floor exit client threads
-			new ExitClientOne(CPMSServerSocket, "EXC_1");
-			new ExitClientTwo(CPMSServerSocket, "EXC_2");
+			new CPMSThread(CPMSServerSocket.accept(), "Exit_1", floorSpaceData).start();
+			new CPMSThread(CPMSServerSocket.accept(), "Exit_2", floorSpaceData).start();
 			
 			// Run the two first floor exit client threads
-			new ExitClientThree(CPMSServerSocket, "EXC_3");
-			new ExitClientFour(CPMSServerSocket, "EXC_4");
+			new CPMSThread(CPMSServerSocket.accept(), "Exit_3", floorSpaceData).start();
+			new CPMSThread(CPMSServerSocket.accept(), "Exit_4", floorSpaceData).start();
 			
 		}
 		
